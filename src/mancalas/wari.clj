@@ -1,6 +1,10 @@
 (ns mancalas.wari
-  (:use [mancalas.lib.macros :only [if-player-a]]
-        [mancalas.lib.core :only [store-of opponent-of]]))
+  (:use [mancalas.lib.macros
+         :only [if-player-a hole next-hole prev-hole base-hole row
+                update-row sum-row on-side? valid-moves]]
+        [mancalas.lib.core
+         :only [change-turns store-of opponent-of two-or-three?
+                drop-seed update-store]]))
 
 
 (def initial-board [4 4 4 4 4 4
@@ -22,47 +26,11 @@
    :end? false})
 
 
-(defn starting-hole [player]
-  "Calculates the absolute index into a board for player's left-most hole"
-  (if-player-a 0 row-count))
-
-
-(defn hole [player row-index]
-  "Return hole as absolute index into a board given relative (player, index) coords."
-  (if-player-a
-    (mod row-index row-count)
-    (-> row-index (mod row-count) (+ row-count))))
-
-
-(def next-hole #(-> % inc (mod hole-count)))
-
-(def previous-hole #(-> % dec (mod hole-count)))
-
-
-(defn row [board player]
-  "Returns slice of board corresponding to player's row"
-  (if-player-a
-    (take row-count board)
-    (drop row-count board)))
-
-
-(defn sum-row [board player]
-  "Counts number of seeds distributed across a player's row"
-  (reduce + (row board player)))
-
-
-(defn on-side? [board-index player]
-  "returns true if board-index is on side (or in row of) player"
-  (if-player-a
-   (and (< board-index row-count) (>= board-index 0))
-   (and (< board-index hole-count) (>= board-index row-count))))
-
-
 (defn valid-move? [board player row-index]
   "Returns true if the the player can move with seeds chosen from their row index"
   (let [in-hand (board (hole player row-index))]
     (if (zero? in-hand)
-      ; We can't move without any seeds in hand of cours
+      ; We can't move without any seeds in hand of course
       false
       (if (zero? (sum-row board (opponent-of player)))
         ; If opponent's side is empty we must sow our seeds onto opponents side
@@ -70,43 +38,11 @@
         true))))
 
 
-(defn valid-moves [board player]
-  "Returns a seq of row indeces comprising valid moves for a player - may be empty"
-  (filter #(valid-move? board player %)(range 0 row-count)))
-
-
-(defn drop-seed [board hole]
-  "Drop seed from hand into hole"
-  (assoc board hole (inc (board hole))))
-
-
-(defn two-or-three? [v]
-  "returns true if value is 2 or 3."
-  (or (= 2 v) (= 3 v)))
-
-
-(defn update-store [game-state player captured-seeds]
-  "Update player's store with captured seeds"
-  (let [store (store-of player)]
-    (assoc game-state store (+ captured-seeds (game-state store)))))
-
-
-(defn update-row [board player new-row]
-  "Update player's row in board with the supplied new row"
-  (vec (if-player-a
-        (concat new-row (drop row-count board))
-        (concat (take row-count board) new-row))))
-
-
-(defn change-turns [game-state]
-  (assoc game-state :turn (opponent-of (:turn game-state))))
-
-
 (defn capture [game-state landing-hole]
   (let [player (:turn game-state)
         board (:board game-state)
         opponent (opponent-of player)
-        opponent-start (starting-hole opponent)
+        opponent-start (base-hole opponent)
         opponent-row (row board opponent)
         position (-> landing-hole (mod row-count) inc)
         capture-hole-candidates (take position opponent-row)
@@ -137,7 +73,7 @@
            in-hand in-hand]
       (if (zero? in-hand)
         ; end of sowing. do any captures to update the game state
-        (let [curr-hole (previous-hole curr-hole)
+        (let [curr-hole (prev-hole curr-hole)
               game-state (assoc game-state :board board :before-capture board)]
           (if (on-side? curr-hole player)
             game-state ; we landed on our side - no capture
@@ -183,10 +119,3 @@
           (assoc (update-store game-state opponent row-sum)
             :board (repeat hole-count 0)
             :end? true))))))
-
-
-
-
-
-
-

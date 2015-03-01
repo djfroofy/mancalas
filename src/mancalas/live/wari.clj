@@ -1,7 +1,7 @@
 (ns mancalas.live.wari
   (:use [mancalas.wari :only
-         [initial-game-state advance-game valid-move? valid-moves row-count]]
-        [mancalas.lib.macros :only [if-player-a when-player-b]]))
+         [initial-game-state advance-game valid-move? row-count]]
+        [mancalas.lib.macros :only [if-player-a when-player-b valid-moves]]))
 
 
 (defn pprint-board [board]
