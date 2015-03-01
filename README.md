@@ -16,10 +16,11 @@ that does none of the following:
 * gives you any control over time or space or attention
 
 
-Let me know if any documentation/code (1) is incorrect with regard to rules of
-specific game, historical origins, cultures associated with game etc. As a
-disclaimer, my principle reference at this point is a single book sitting next
-to my laptop (Russ 2000) (2).
+I welcome reviewing any pull requests for new games, corrections to docs (1)
+or code that is incorrect with regard to rules of the specific game, historical
+origins, cultures associated with game etc. As a disclaimer, my principle
+reference at this point is a single book sitting next to my laptop
+(Russ 2000) (2).
 
 The only UI so far this has are files in mancalas.live package - so you'll need
 editor with live coding capabilities (LightTable, emacs, vim fireplace, etc) to
@@ -27,9 +28,11 @@ play. Eventually I'm aiming for simple web based interface so I might retarget
 to Clojurescript or keep base game logic modules portable between Clojure and
 Clojurescript.
 
-I dunno, I have two kids and a enterprisey office job so jsut authoring this
-README is pretty ambitious for me. So don't expect much here and I won't ask
-you for any money. Deal?
+I dunno, I have two kids and an enterprisey office job so just authoring this
+README is pretty ambitious for me. So don't expect much here and I won't make
+pleas for any money. Deal?
+
 
 [1] And you're all: Yeah, what documentation?
+
 [2] * Russ, Larry _The Complete Manacala Games Book_, 2000 Print.
