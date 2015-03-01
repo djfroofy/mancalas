@@ -5,7 +5,7 @@
 ; FIXME - this is obviously in progress
 
 ;\
-; Um El Bagara - or the Cow's Game.
+; Um El Bagara - "The Cow Game"
 ;
 ; Played in northeast Sudan (the Davies) generally in pits dug out of the
 ; sand. The board is 2x5 and direction of move depends on where seeds are
