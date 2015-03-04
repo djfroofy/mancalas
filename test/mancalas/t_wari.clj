@@ -1,5 +1,6 @@
 (ns mancalas.t-wari
-  (:use midje.sweet)
+  (:use midje.sweet
+        [mancalas.lib.testing :only [read-board] :rename {read-board rb}])
   (:require [mancalas.wari :as wari]))
 
 ; TODO - rewrite these using read-board macro for clarity
@@ -14,9 +15,12 @@
  wari/row-count => 6)
 
 
-(let [board [1 0 3 4 5 1 6 4 0 1 2 3]
-      board-with-row-a-empty [0 0 0 0 0 0 6 4 0 1 2 3]
-      board-with-row-b-empty [1 0 3 4 5 1 0 0 0 0 0 0]]
+(let [board (rb [3 2 1 0 4 6
+                 1 0 3 4 5 1])
+      board-with-row-a-empty (rb [3 2 1 0 4 6
+                                  0 0 0 0 0 0])
+      board-with-row-b-empty (rb [0 0 0 0 0 0
+                                  1 0 3 4 5 1])]
   (facts
    "about valid-move?"
    (fact
@@ -55,32 +59,43 @@
 
 
 (let [game-state-single-capture (assoc wari/initial-game-state
-                                  :board [3 4 2 6 0 1 4 3 4 7 0 14])
+                                  :board (rb [14 0 7 4 3 4
+                                              3  4 2 6 0 1]))
       game-state-multi-capture (assoc wari/initial-game-state
-                                 :board [9 0 7 0 5  2 5 3 2 0 12 3])
+                                 :board (rb [3 12 0 2 3 5
+                                             9 0  7 0 5 2]))
       game-state-single-capture-b (assoc wari/initial-game-state
-                                  :board [4 3 4 7 0 14 3 4 2 6 0 1] :turn :player-b)
+                                  :board (rb [1 0 6 2 4 3
+                                              4 3 4 7 0 14]) :turn :player-b)
       game-state-multi-capture-b (assoc wari/initial-game-state
-                                 :board [5 3 2 0 12 3 9 0 7 0 5 2] :turn :player-b)
+                                 :board (rb [2 5 0 7 0  9
+                                             5 3 2 0 12 3]) :turn :player-b)
       game-state-no-capture-b (assoc wari/initial-game-state
-                                :board [2 3 9 4 9 1 1 7 0 7 1 8] :turn :player-b)
+                                :board (rb [8 1 7 0 7 1
+                                            2 3 9 4 9 1]) :turn :player-b)
       game-state-empty (assoc wari/initial-game-state
-                           :board [1 0 0 2 3 3 2 3 2 0 0 0])
+                           :board (rb [0 0 0 2 3 2
+                                       1 0 0 2 3 3]))
       game-state-empty-b (assoc wari/initial-game-state
-                           :board [2 3 2 0 0 0 1 0 0 2 3 3] :turn :player-b)]
+                           :board (rb [3 3 2 0 0 1
+                                       2 3 2 0 0 0]) :turn :player-b)]
   (facts
    "about capture"
    (fact
     "if we land in hole with 2-3 on opponents row we capture those seeds and any seeds
     in consecutive to landing hole (and along our path) also with 2-3 seeds"
     (map (wari/capture game-state-single-capture 7)
-         [:board :player-a-store :player-b-store])  =>  [[3 4 2 6 0 1 4 0 4 7 0 14] 3 0]
+         [:board :player-a-store :player-b-store])  =>  [(rb [14 0 7 4 0 4
+                                                              3  4 2 6 0 1]) 3 0]
     (map (wari/capture game-state-multi-capture 8)
-         [:board :player-a-store :player-b-store])  => [[9 0 7 0 5 2 5 0 0 0 12 3] 5 0]
+         [:board :player-a-store :player-b-store])  => [(rb [3 12 0 0 0 5
+                                                             9 0  7 0 5 2]) 5 0]
     (map (wari/capture game-state-single-capture-b 1)
-         [:board :player-b-store :player-a-store])  =>  [[4 0 4 7 0 14 3 4 2 6 0 1] 3 0]
+         [:board :player-b-store :player-a-store])  =>  [(rb [1 0 6 2 4 3
+                                                              4 0 4 7 0 14]) 3 0]
     (map (wari/capture game-state-multi-capture-b 2)
-         [:board :player-b-store :player-a-store])  =>  [[5 0 0 0 12 3 9 0 7 0 5 2] 5 0]
+         [:board :player-b-store :player-a-store])  =>  [(rb [2 5 0 7 0  9
+                                                              5 0 0 0 12 3]) 5 0]
     (map (wari/capture game-state-no-capture-b 4)
          [:board :player-b-store :player-a-store])  =>  [(:board game-state-no-capture-b) 0 0])
    (fact
@@ -90,13 +105,17 @@
     (map (wari/capture game-state-empty-b 2)
          [:board :player-b-store :player-a-store]) => [(:board game-state-empty-b) 0 0])))
 
-(let [end-board-a (assoc wari/initial-game-state :board [1 1 1 1 1 0  0 0 0 0 0 0])
-      end-board-b (assoc wari/initial-game-state :board [0 0 0 0 0 0  1 1 1 1 1 0] :turn :player-b)]
+(let [end-board-a (assoc wari/initial-game-state :board (rb [0 0 0 0 0 0
+                                                             1 1 1 1 1 0]))
+      end-board-b (assoc wari/initial-game-state :board (rb [0 1 1 1 1 1
+                                                             0 0 0 0 0 0]) :turn :player-b)]
   (facts
    "about advance-game"
    (fact
     "if opponent's side is empty and we can't make a move, opponent captures all our seeds"
     (map (wari/advance-game end-board-a nil)
-         [:board :player-a-store :player-b-store :end?]) => [[0 0 0 0 0 0  0 0 0 0 0 0] 0 5 true]
+         [:board :player-a-store :player-b-store :end?]) => [(rb [0 0 0 0 0 0
+                                                                  0 0 0 0 0 0]) 0 5 true]
     (map (wari/advance-game end-board-b nil)
-         [:board :player-a-store :player-b-store :end?]) => [[0 0 0 0 0 0  0 0 0 0 0 0] 5 0 true])))
+         [:board :player-a-store :player-b-store :end?]) => [(rb [0 0 0 0 0 0
+                                                                  0 0 0 0 0 0]) 5 0 true])))

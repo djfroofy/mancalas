@@ -1,6 +1,6 @@
 (ns mancalas.wari
   (:use [mancalas.lib.macros
-         :only [if-player-a hole next-hole prev-hole base-hole row
+         :only [if-player-a hole next-hole prev-hole left-hole row
                 update-row sum-row on-side? valid-moves]]
         [mancalas.lib.core
          :only [change-turns store-of opponent-of two-or-three?
@@ -15,6 +15,7 @@
 
 
 (def row-count (/ hole-count 2))
+
 
 
 (def initial-game-state
@@ -42,7 +43,6 @@
   (let [player (:turn game-state)
         board (:board game-state)
         opponent (opponent-of player)
-        opponent-start (base-hole opponent)
         opponent-row (row board opponent)
         position (-> landing-hole (mod row-count) inc)
         capture-hole-candidates (take position opponent-row)

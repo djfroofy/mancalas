@@ -21,6 +21,14 @@
  (core/two-or-four? 3) => false
  (core/two-or-four? 4) => true)
 
+(fact
+ "zero-or-one? returns true iff value is a 0 or 1"
+ (core/zero-or-one? 0) => true
+ (core/zero-or-one? 1) => true
+ (core/zero-or-one? 2) => false
+ (core/zero-or-one? 3) => false
+ (core/zero-or-one? 4) => false)
+
 (let [board (rb [5 4 3 2 1
                   6 7 8 9 8])]
   (fact

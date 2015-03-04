@@ -132,14 +132,22 @@
 
 
 (fact
- "base-hole returns the base abs board index for player depending on binding of row-count"
+ "left-hole returns the base abs board index for player depending on binding of row-count"
  (let [row-count 2]
-   (macros/base-hole :player-a) => 0
-   (macros/base-hole :player-b) => 2)
+   (macros/left-hole :player-a) => 0
+   (macros/left-hole :player-b) => 2)
  (let [row-count 5]
-   (macros/base-hole :player-a) => 0
-   (macros/base-hole :player-b) => 5))
+   (macros/left-hole :player-a) => 0
+   (macros/left-hole :player-b) => 5))
 
+(fact
+ "right-hole returns the base abs board index for player depending on binding of row-count"
+ (let [row-count 2 hole-count 4]
+   (macros/right-hole :player-a) => 1
+   (macros/right-hole :player-b) => 3)
+ (let [row-count 5 hole-count 10]
+   (macros/right-hole :player-a) => 4
+   (macros/right-hole :player-b) => 9))
 
 (fact
  "row returns seq corresponding to a player's row depending on binding of row-count"

@@ -20,6 +20,10 @@
   "returns true if value is 2 or 3"
   (or (= 2 v) (= 4 v)))
 
+(defn zero-or-one? [v]
+  "returns treue if value if zero or one"
+  (or (zero? v) (= v 1)))
+
 
 (defn change-turns [game-state]
   (assoc game-state :turn (opponent-of (:turn game-state))))

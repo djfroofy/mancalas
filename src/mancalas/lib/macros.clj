@@ -1,4 +1,5 @@
-(ns mancalas.lib.macros)
+(ns mancalas.lib.macros
+  (:require [mancalas.lib.core :as core]))
 
 ;.;
 ; These macros rely on various name bound in module's namespace (or other means of binding):
@@ -51,9 +52,10 @@
 
 (defmacro hole [player row-index]
   "Return hole as absolute index into a board given relative (player, index) coords."
-  (if-player-a
-    `(mod ~row-index ~'row-count)
-    `(-> ~row-index (mod ~'row-count) (+ ~'row-count))))
+  `(let [~'player ~player]
+    (if-player-a
+      (mod ~row-index ~'row-count)
+      (-> ~row-index (mod ~'row-count) (+ ~'row-count)))))
 
 
 (defmacro next-hole
@@ -62,8 +64,9 @@
   hole-count"
   ([board-index] `(next-hole ~board-index :ccw))
   ([board-index direction]
-   (let [adder (if-ccw inc dec)]
-     `(-> ~board-index ~adder (mod ~'hole-count)))))
+   `(let [~'direction ~direction
+          ~'adder (if-ccw inc dec)]
+     (-> ~board-index ~'adder (mod ~'hole-count)))))
 
 (defmacro prev-hole
   "Returns the previous hole given the current absolute board-index and optional
@@ -71,29 +74,36 @@
   hole-count"
   ([board-index] `(prev-hole ~board-index :ccw))
   ([board-index direction]
-   (let [adder (if-ccw dec inc)]
-     `(-> ~board-index ~adder (mod ~'hole-count)))))
+   `(let [~'direction ~direction
+          ~'adder (if-ccw dec inc)]
+      (-> ~board-index ~'adder (mod ~'hole-count)))))
 
 
-(defmacro base-hole [player]
+(defmacro left-hole [player]
   "Calculates the absolute index into a board for player's left-most hole"
-  (if-player-a
-   0
-   'row-count))
+  `(let [~'player ~player]
+     (if-player-a 0 ~'row-count)))
+
+(defmacro right-hole [player]
+  "Calculates the absolute index into a body for player's right-most hole"
+  `(let [~'player ~player]
+     (dec (if-player-a ~'row-count ~'hole-count))))
 
 
 (defmacro row [board player]
   "Returns slice of board corresponding to player's row"
-  (if-player-a
-    `(take ~'row-count ~board)
-    `(drop ~'row-count ~board)))
+  `(let [~'player ~player]
+     (if-player-a
+      (take ~'row-count ~board)
+      (drop ~'row-count ~board))))
 
 
 (defmacro update-row [board player new-row]
   "Update player's row in board with the supplied new row"
-  (if-player-a
-    `(vec (concat ~new-row (drop ~'row-count ~board)))
-    `(vec (concat (take ~'row-count ~board) ~new-row))))
+  `(let [~'player ~player]
+     (if-player-a
+      (vec (concat ~new-row (drop ~'row-count ~board)))
+      (vec (concat (take ~'row-count ~board) ~new-row)))))
 
 
 (defmacro sum-row [board player]
@@ -103,9 +113,10 @@
 
 (defmacro on-side? [board-index player]
   "returns true if board-index is on side (or in row of) player"
-  (if-player-a
-   `(and (< ~board-index ~'row-count) (>= ~board-index 0))
-   `(and (< ~board-index ~'hole-count) (>= ~board-index ~'row-count))))
+  `(let [~'player ~player]
+     (if-player-a
+      (and (< ~board-index ~'row-count) (>= ~board-index 0))
+      (and (< ~board-index ~'hole-count) (>= ~board-index ~'row-count)))))
 
 ;\
 ; valid-moves depends on binding of 'row-count' and 'valid-move?'
