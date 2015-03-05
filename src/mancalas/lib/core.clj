@@ -1,6 +1,16 @@
 (ns mancalas.lib.core)
 
 
+(defn new-game-state [board]
+  {:turn :player-a
+   :board board
+   :before-capture nil
+   :player-a-store 0
+   :player-b-store 0
+   :round 0
+   :end? false})
+
+
 (def opponent-of
   {:player-a :player-b
    :player-b :player-a})

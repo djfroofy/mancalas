@@ -94,6 +94,7 @@
     (let [player (:turn game-state)
           board (:board game-state)
           opponent (opponent-of player)
+          ; fixme = this should be simplified to just opponent (know by by initial on-side? check)
           row-owner (if (< landing-hole row-count) :player-a :player-b)
           board-row (row board row-owner)
           position (-> landing-hole (mod row-count))
@@ -156,3 +157,4 @@
                   player row-sum)
             :board (repeat hole-count 0)
             :end? true))))))
+
