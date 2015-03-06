@@ -25,8 +25,8 @@ reference at this point is a single book sitting next to my laptop
 The only UI so far this has are files in mancalas.live package - so you'll need
 editor with live coding capabilities (LightTable, emacs, vim fireplace, etc) to
 play. Eventually I'm aiming for simple web based interface so I might retarget
-to Clojurescript or keep base game logic modules portable between Clojure and
-Clojurescript.
+to ClojureScript or keep base game logic modules portable between Clojure and
+ClojureScript.
 
 I dunno, I have two kids and an enterprisey office job so just authoring this
 README is pretty ambitious for me. So don't expect much here and I won't make
