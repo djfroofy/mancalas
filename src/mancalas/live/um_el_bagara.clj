@@ -53,22 +53,21 @@
 ;; Uncomment and evaluate the following to setup a game
 ;; playable in your editor (assuming you have live eval setup)
 ;
-(def game-atom (new-game-atom))
-(def game (start-game game-atom))
+;(def game-atom (new-game-atom))
+;(def game (start-game game-atom))
 
 
 ;; Advance moves by choosing a pocket index on your row - player-b
 ;; makes random moves.
 ;
-(game nil :cw)
+;(game nil :cw)
 
-(swap! game-atom change-turns)
 ;; See the state of the game
 ;
-@game-atom
+;@game-atom
 ;; Pretty print the board from player-a's viewpoint
 ;
-(pprint-board (:board @game-atom))
+;(pprint-board (:board @game-atom))
 
 ;; If you can't make a valid move (opponent's row is empty and you can't sow onto it)
 ;; then end the game with:
