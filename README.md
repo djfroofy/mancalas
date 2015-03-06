@@ -35,4 +35,4 @@ pleas for any money. Deal?
 
 [1] And you're all: Yeah, what documentation?
 
-[2] * Russ, Larry _The Complete Manacala Games Book_, 2000 Print.
+[2] Russ, Larry _The Complete Manacala Games Book_, 2000 Print.
